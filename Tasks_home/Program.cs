@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Tasks_home
@@ -61,10 +63,20 @@ namespace Tasks_home
 
                             try
                             {
-                                Task task = new Task(() => ShowSimpleNumbers2(begin, end));
+                               Task<int[]> task= new Task<int[]>(() => ShowSimpleNumbers2(begin, end));
+                                
                                 task.Start();
+                              
                                 task.Wait();
-                                Console.WriteLine("Завершение метода Main");
+                                int[] arr = task.Result;
+
+                                Console.WriteLine("Начало основного потока");
+                                for (int i = 0; i < arr.Length; i++)
+                                {
+                                    Console.Write(arr[i]+ " |");
+                                }
+                                Console.WriteLine();
+                                Console.WriteLine("Основной поток завершен");
                             }
                             catch (Exception ex)
                             {
@@ -100,18 +112,30 @@ namespace Tasks_home
         /// <summary>
         /// метод отображает все простые числа принимает аргументом границы начала и конца границ
         /// </summary>
-        private static void ShowSimpleNumbers2(int star, int end)
+        private static int [] ShowSimpleNumbers2(int star, int end)
         {
+            int size = 0;
             Console.WriteLine($"MyTask() №{Task.CurrentId} запущен");
+            //подсчет размера массива
+            for (int i = star; i < end; i++)
+            {
+                size++;
+            }
+
+           List<int> arr=new List<int>();
+
             for (int i = star; i < end; i++)
             {
                 if (IsPrime(i))
                 {
-                    Console.Write(i + " |");
+                    arr.Add(i);
+                    
                 }
             }
             Console.WriteLine();
             Console.WriteLine($"MyTask() #{Task.CurrentId} завершен");
+            int[] res = arr.ToArray();
+            return res ;
         }
 
 
